@@ -25,6 +25,9 @@ public class GameAudio {
 	}
 	
 	public static void playSound(int index) {
+		if(audioClip.isRunning()) {
+			audioClip.stop();
+		}
 		if(audioClip.isRunning()==false) {
 			audioClip.close();
 			audioClip.flush();

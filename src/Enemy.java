@@ -7,10 +7,12 @@ public class Enemy extends GameObject{
 	public Enemy(String ObjectName, Rectangle[] hitbox, Image[] sprite, int x, int y) {
 		super(ObjectName, hitbox, sprite, x, y);
 	}
-	
-	@Override
-	public void UpdatePosition() {
 
+	@Override
+	public void UpdatePosition(float deltaTime) {
+		
 	}
+
+	
 
 }
