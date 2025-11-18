@@ -6,6 +6,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Player extends GameObject {
     float speed = 300.0f; 
@@ -13,10 +14,15 @@ public class Player extends GameObject {
     float currentVelocityY = 0;
     float acceleration = 2000.0f; 
     float deceleration = 1500.0f;
+    int hp = 100;
+    int hpBarWidth=100;
+    int hpBarHeight=20;
     
-    double fov = 60;
-    int rayLength = 1000;
+    double fov = 30;
+    int rayLength = 300;
     int ammo = 5;
+    float fireRate = 0.1f; 
+    float timeSinceLastShot = 0;
     
     public Point leftRayEnd;
     public Point rightRayEnd;
@@ -38,14 +44,15 @@ public class Player extends GameObject {
     public int getCenterY() {
         return (int)y + sprite[currentSprite].getHeight(null) / 2;
     }
-    
+
     public void shootBullet(Point p) {
-        if(ammo - bullets.size() > 0) {
-            bullets.add(new Bullet(new Rectangle(getCenterX(), getCenterY(), 20, 5), p,Color.decode("#4bbf8f")));
+        if(ammo - bullets.size() > 0 && timeSinceLastShot >= fireRate) {
+            bullets.add(new Bullet(new Rectangle(getCenterX(), getCenterY(), 20, 5), p, Color.decode("#4bbf8f")));
             GameAudio.playSound(0);
+            timeSinceLastShot = 0;
         }
     }
-    
+
     public void drawRay(Graphics2D g2d, Point mouse) {
         double dx = mouse.x - this.getCenterX();
         double dy = mouse.y - this.getCenterY();
@@ -113,6 +120,20 @@ public class Player extends GameObject {
         return false;
     }
     
+    public void drawHP(Graphics2D g2d) {
+        int currentBarWidth = (int)((hp / 100.0f) * hpBarWidth);
+        int barRelativePos = 30;
+        
+        g2d.setColor(Color.RED);
+        g2d.fillRect(getCenterX() - hpBarWidth/2, getCenterY() + barRelativePos, hpBarWidth, hpBarHeight);
+        
+        g2d.setColor(Color.GREEN);
+        g2d.fillRect(getCenterX() - hpBarWidth/2, getCenterY() + barRelativePos, currentBarWidth, hpBarHeight);
+        
+        g2d.setColor(Color.WHITE);
+        g2d.drawRect(getCenterX() - hpBarWidth/2, getCenterY() + barRelativePos, hpBarWidth, hpBarHeight);
+    }
+    
     public void checkRayIntersections(ArrayList<GameObject> gameObjects) {
         if(leftRayEnd == null || rightRayEnd == null) return;
         
@@ -125,7 +146,7 @@ public class Player extends GameObject {
             }
         }
     }
-    
+
     @Override
     public void UpdatePosition(float deltaTime) {
         float inputX = 0;
@@ -177,18 +198,31 @@ public class Player extends GameObject {
             }
         }
         
+        timeSinceLastShot += deltaTime;
+        
         x += currentVelocityX * deltaTime;
         y += currentVelocityY * deltaTime;
         
         this.hitbox = updateHitbox();
         
-        ArrayList<Bullet> toRemove = new ArrayList<>();
-        for (Bullet bullet : bullets) {
+        bullets.removeIf(bullet -> {
             bullet.updateBullet(deltaTime);
-            if (bullet.bulletExploded()) {
-                toRemove.add(bullet);
-            }
-        }
-        bullets.removeAll(toRemove);
+            return bullet.bulletExploded();
+        });
+    }
+    
+    public void checkForHit(GameObject o){
+    	Enemy[] enemy = new Enemy[1];
+    	try {
+    		enemy[0] = (Enemy)o; 
+    	}catch (Exception e) {}
+    	if(enemy!=null) {
+    		bullets.forEach(b->{
+    			if(enemy[0].checkForBulletPenetration(b.hitbox) && enemy[0].hp>0) {
+					enemy[0].hp-=b.damage;
+					System.out.println(enemy[0].hp);
+    			}
+    		});	
+    	}
     }
 }

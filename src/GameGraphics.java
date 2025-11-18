@@ -16,15 +16,22 @@ public class GameGraphics extends JPanel{
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 		gameObjects.forEach(o -> {
-			if(o.isVisible())
+			if(o.isVisible()) {
 				o.drawSprite(g2d);
+				try {
+					((Enemy)o).drawHP(g2d);
+				}catch(ClassCastException e) {
+				}
+			}
 		});
+		
 		Player p = (Player)gameObjects.get(0);
 		p.checkRayIntersections(gameObjects);
 		
 		if(mousePosition!=null) {
 			p.drawRay(g2d, mousePosition);
 		}
+		p.drawHP(g2d);
 		if(!p.bullets.isEmpty()) {
 			p.bullets.forEach(o -> o.draw(g2d));
 		}

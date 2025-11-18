@@ -25,8 +25,8 @@ public class Window extends JFrame {
         GameAudio.addSound(new Sound("./assets/shoot.wav"));
         
         // Player
-        tempImage.add(Main.imageLoader("./assets/Player.png").getScaledInstance(100, 100, Image.SCALE_FAST));
-        tempHitbox.add(new Rectangle(0, 0, 100, 100));
+        tempImage.add(Main.imageLoader("./assets/Player.png").getScaledInstance(20, 20, Image.SCALE_FAST));
+        tempHitbox.add(new Rectangle(0, 0, 20, 20));
         
         gameObjects.add(new Player("Player", 
             (Rectangle[]) tempHitbox.toArray(new Rectangle[0]),
@@ -38,8 +38,8 @@ public class Window extends JFrame {
         tempHitbox.clear();
         
         // Enemy
-        tempImage.add(Main.imageLoader("./assets/Enemy.png").getScaledInstance(100, 100, Image.SCALE_FAST));
-        tempHitbox.add(new Rectangle(500,500,100,100)); 
+        tempImage.add(Main.imageLoader("./assets/Enemy.png").getScaledInstance(20, 20, Image.SCALE_FAST));
+        tempHitbox.add(new Rectangle(500,500,20,20)); 
         
         gameObjects.add(new Enemy("Enemy", 
             (Rectangle[]) tempHitbox.toArray(new Rectangle[0]),

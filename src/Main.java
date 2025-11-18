@@ -20,9 +20,12 @@ public class Main {
     public static void main(String[] args) {
         Window w = new Window();
         GameTimer timer = new GameTimer();
-
         final double TARGET_FPS = 60.0;
-        final double TARGET_FRAME_TIME = 1000.0 / TARGET_FPS; // millisecondi per frame
+        final double TARGET_FRAME_TIME = 1000.0 / TARGET_FPS;
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            GameAudio.shutdown();
+        }));
         
         while(true) {
             long frameStart = System.currentTimeMillis();
@@ -32,6 +35,12 @@ public class Main {
             w.inputManager.update();
             
             w.gameObjects.forEach(e -> e.UpdatePosition(deltaTime));
+             
+            Player p = (Player)w.gameObjects.get(0);
+            w.gameObjects.forEach(e->{
+            	p.checkCollisionWith(e);
+            });
+            
             
             w.g.repaint();
             

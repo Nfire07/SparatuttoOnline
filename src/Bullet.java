@@ -8,6 +8,7 @@ public class Bullet {
     Rectangle hitbox;
     float duration = 1.5f; 
     float bulletSpeed = 500;
+    int damage = 10;
     double angle;
     Color bulletColor;
     
